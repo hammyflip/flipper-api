@@ -1,6 +1,7 @@
 import type { Express } from "express-serve-static-core";
 import cors from "cors";
 import express from "express";
+import getRecentPlays from "src/api/get/getRecentPlays";
 
 function useMiddleware(app: Express): void {
   app.use(express.static("public"));
@@ -26,6 +27,8 @@ export default function getApp(): Express {
   app.get("/", async (req, res) => {
     res.send("Hello beebop");
   });
+
+  app.get("/getRecentPlays", getRecentPlays);
 
   return app;
 }
