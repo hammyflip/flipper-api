@@ -24,7 +24,7 @@ export default function getApp(): Express {
   useMiddleware(app);
 
   app.get("/", async (req, res) => {
-    res.send("Hello World!");
+    res.send("Hello beebop");
   });
 
   return app;
