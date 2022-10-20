@@ -1,0 +1,40 @@
+version: "3.6"
+services:
+  postgres:
+    container_name: example-postgres
+    image: postgres:12
+    restart: always
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: example
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_USER: postgres
+    # Uncomment for dev
+    ports:
+      - 6432:5432
+  redis:
+    container_name: example-redis
+    image: redis
+    volumes:
+      # See https://hub.docker.com/_/redis, "start with persistent storage"
+      - redis-data:/data
+  api:
+    image: example-api
+    container_name: example-api
+    ports:
+      - 4000:4000
+    environment:
+      # Needed for schema.prisma to pick this up when running on the droplet.
+      DATABASE_URL: postgresql://postgres:postgrespassword@postgres:5432/example?pool_timeout=200&connect_timeout=200&connection_limit=5
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+    # Uncomment for dev (hot reload)
+    volumes:
+      - .:/usr/src/app
+volumes:
+  db_data:
+  redis-data:
