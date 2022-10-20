@@ -30,6 +30,8 @@ model flip {
   flipsPrediction Int
   flipsResult     Int
   timeCreated     DateTime @default(now()) @db.Timestamptz(6)
+  txid1           String
+  txid2           String
 
   currency currency @relation(fields: [currencyId], references: [id], onDelete: Restrict, onUpdate: Restrict)
   user     user     @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)

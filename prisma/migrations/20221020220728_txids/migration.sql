@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "flip" ADD COLUMN     "txid1" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "txid2" TEXT NOT NULL DEFAULT '';
