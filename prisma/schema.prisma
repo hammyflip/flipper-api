@@ -8,20 +8,37 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model todos {
-  id           Int      @id @default(autoincrement())
-  title        String
-  is_completed Boolean  @default(false)
-  is_public    Boolean  @default(false)
-  created_at   DateTime @default(now()) @db.Timestamp(6)
-  user_id      String
-  users        users    @relation(fields: [user_id], references: [id])
+model currency {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String   @unique
+  decimals    Int
+  symbol      String   @unique
+  shortSymbol String?
+  iconSrc     String?
+  mint        String   @unique
+  usdRate     Decimal? @db.Decimal
+  solRate     Decimal? @db.Decimal
+
+  flip flip[]
 }
 
-model users {
-  id         String    @id
-  name       String
-  created_at DateTime  @default(now()) @db.Timestamptz(6)
-  last_seen  DateTime? @db.Timestamptz(6)
-  todos      todos[]
+model flip {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  currencyId      String   @db.Uuid
+  userId          String   @db.Uuid
+  betAmount       BigInt
+  flipsPrediction Int
+  flipsResult     Int
+  timeCreated     DateTime @default(now()) @db.Timestamptz(6)
+
+  currency currency @relation(fields: [currencyId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  user     user     @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+}
+
+model user {
+  id          String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userAddress String
+  username    String?
+
+  flip flip[]
 }

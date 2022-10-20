@@ -8,21 +8,23 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "build": "tsc",
+    "build": "prisma migrate deploy && prisma generate && tsc",
     "eslint": "eslint 'src/**/*.ts'",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:gen": "prisma generate",
     "nodemon": "NODE_PATH=./dist nodemon dist/src/index.js",
     "run-server": "NODE_PATH=./dist node dist/src/index.js",
     "start": "ts-node-dev --ignore-watch 'src/generated/*.*' --require dotenv/config  --require tsconfig-paths/register --files src/index.ts",
     "tsc": "tsc"
   },
   "dependencies": {
-    "@prisma/client": "^2.27.0",
+    "@prisma/client": "^4.5.0",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
     "invariant": "^2.2.4",
-    "prisma": "^2.27.0"
+    "prisma": "^4.5.0"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.2",
@@ -32,6 +34,7 @@
     "@types/invariant": "^2.2.34",
     "@typescript-eslint/eslint-plugin": "^4.28.4",
     "@typescript-eslint/parser": "^4.28.4",
+    "dotenv-run-script": "^0.2.0",
     "eslint": "^7.31.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^8.3.0",
