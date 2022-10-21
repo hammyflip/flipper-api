@@ -8,8 +8,9 @@ import getPrisma from "src/utils/prisma/getPrisma";
 import combineTransactions from "src/utils/solana/combineTransactions";
 import ConnectionWrapper from "src/utils/solana/ConnectionWrapper";
 import getAuthorityKeypair from "src/utils/solana/getAuthorityKeypair";
-import getConnection from "src/utils/solana/getConnection";
 import loadFlipperSdk from "src/utils/solana/loadFlipperSdk";
+
+const NUM_RETRIES = 3;
 
 function send500(res: Response, errorMessage: string) {
   res.status(500).json({ errorMessage });
@@ -29,9 +30,11 @@ async function verifyTx(res: Response, txid: string) {
     return null;
   }
 
-  const connection = getConnection();
-  // TODO: add retries
-  const parsedTx = await connection.getParsedTransaction(txid);
+  const parsedTx = await ConnectionWrapper.getParsedTransaction(
+    txid,
+    "confirmed",
+    NUM_RETRIES
+  );
   if (parsedTx == null) {
     send500(res, "tx could not be fetched via RPC");
     return null;
@@ -68,7 +71,6 @@ async function verifyTx(res: Response, txid: string) {
   return parsedIx2.accounts;
 }
 
-// TODO: implement
 export default async function processBet(
   req: Request,
   res: Response,
@@ -104,10 +106,11 @@ export default async function processBet(
   });
   const tx = combineTransactions([flipTx, payoutTx]);
 
-  // TODO: add retries
-  const txid2 = await ConnectionWrapper.sendAndConfirmTransaction(tx, [
-    getAuthorityKeypair(),
-  ]);
+  const txid2 = await ConnectionWrapper.sendAndConfirmTransaction(
+    tx,
+    [getAuthorityKeypair()],
+    NUM_RETRIES
+  );
 
   const prisma = getPrisma();
   const betAmount = bettorInfoAccountBefore.account.amount.toNumber();
