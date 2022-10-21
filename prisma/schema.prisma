@@ -38,9 +38,8 @@ model flip {
 }
 
 model user {
-  id          String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userAddress String
-  username    String?
+  id       String  @id
+  username String?
 
   flip flip[]
 }

@@ -5,7 +5,11 @@ import {
 import { PartiallyDecodedInstruction } from "@solana/web3.js";
 import { NextFunction, Request, Response } from "express";
 import getPrisma from "src/utils/prisma/getPrisma";
+import combineTransactions from "src/utils/solana/combineTransactions";
+import ConnectionWrapper from "src/utils/solana/ConnectionWrapper";
+import getAuthorityKeypair from "src/utils/solana/getAuthorityKeypair";
 import getConnection from "src/utils/solana/getConnection";
+import loadFlipperSdk from "src/utils/solana/loadFlipperSdk";
 
 function send500(res: Response, errorMessage: string) {
   res.status(500).json({ errorMessage });
@@ -77,5 +81,61 @@ export default async function processBet(
     return;
   }
 
-  res.json({ success: true });
+  const sdk = loadFlipperSdk();
+
+  const bettorInfoAccountBefore = await sdk.fetchBettorInfo(
+    accounts.bettor,
+    accounts.treasuryMint
+  );
+
+  const results = Math.round(Math.random());
+  const flipTx = await sdk.flipTx(
+    {
+      bettor: accounts.bettor,
+      treasuryMint: accounts.treasuryMint,
+    },
+    {
+      results,
+    }
+  );
+  const payoutTx = await sdk.payoutTx({
+    bettor: accounts.bettor,
+    treasuryMint: accounts.treasuryMint,
+  });
+  const tx = combineTransactions([flipTx, payoutTx]);
+
+  // TODO: add retries
+  const txid2 = await ConnectionWrapper.sendAndConfirmTransaction(tx, [
+    getAuthorityKeypair(),
+  ]);
+
+  const prisma = getPrisma();
+  const betAmount = bettorInfoAccountBefore.account.amount.toNumber();
+  const flipsPrediction = bettorInfoAccountBefore.account.bets;
+  await prisma.flip.create({
+    data: {
+      currency: {
+        connect: {
+          id: "foo",
+        },
+      },
+      user: {
+        connectOrCreate: {
+          create: {
+            id: accounts.bettor.toString(),
+          },
+          where: {
+            id: accounts.bettor.toString(),
+          },
+        },
+      },
+      betAmount,
+      flipsPrediction,
+      flipsResult: results,
+      txid1: txid,
+      txid2,
+    },
+  });
+
+  res.json({ betAmount, didUserWinBet: flipsPrediction === results });
 }
