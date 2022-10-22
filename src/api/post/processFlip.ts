@@ -4,6 +4,7 @@ import {
 } from "@hammyflip/flipper-sdk";
 import { PartiallyDecodedInstruction } from "@solana/web3.js";
 import { NextFunction, Request, Response } from "express";
+import insertSolanaCurrency from "src/utils/currency/insertSolanaCurrency";
 import getPrisma from "src/utils/prisma/getPrisma";
 import combineTransactions from "src/utils/solana/combineTransactions";
 import ConnectionWrapper from "src/utils/solana/ConnectionWrapper";
@@ -116,11 +117,13 @@ export default async function processFlip(
   const prisma = getPrisma();
   const betAmount = bettorInfoAccountBefore.account.amount.toNumber();
   const flipsPrediction = bettorInfoAccountBefore.account.bets;
+  // TODO: support SPL tokens
+  const solanaCurrency = await insertSolanaCurrency();
   await prisma.flip.create({
     data: {
       currency: {
         connect: {
-          id: "foo",
+          id: solanaCurrency.id,
         },
       },
       user: {
