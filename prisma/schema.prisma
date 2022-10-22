@@ -25,7 +25,7 @@ model currency {
 model flip {
   id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   currencyId      String   @db.Uuid
-  userId          String   @db.Uuid
+  userId          String
   betAmount       BigInt
   flipsPrediction Int
   flipsResult     Int

@@ -17,19 +17,20 @@ CREATE TABLE "currency" (
 CREATE TABLE "flip" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "currencyId" UUID NOT NULL,
-    "userId" UUID NOT NULL,
+    "userId" TEXT NOT NULL,
     "betAmount" BIGINT NOT NULL,
     "flipsPrediction" INTEGER NOT NULL,
     "flipsResult" INTEGER NOT NULL,
     "timeCreated" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "txid1" TEXT NOT NULL,
+    "txid2" TEXT NOT NULL,
 
     CONSTRAINT "flip_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "user" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "userAddress" TEXT NOT NULL,
+    "id" TEXT NOT NULL,
     "username" TEXT,
 
     CONSTRAINT "user_pkey" PRIMARY KEY ("id")
