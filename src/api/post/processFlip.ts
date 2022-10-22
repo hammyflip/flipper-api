@@ -59,8 +59,9 @@ async function verifyTx(res: Response, txid: string) {
 
     return parsedIx.accounts;
   }
+
   const ix1 = instructions[0];
-  const ix2 = instructions[0];
+  const ix2 = instructions[1];
   const parsedIx1 = parseCreateBettorInfoIx(ix1 as PartiallyDecodedInstruction);
   const parsedIx2 = parsePlaceBetIx(ix2 as PartiallyDecodedInstruction);
   if (parsedIx1 == null || parsedIx2 == null) {
@@ -71,7 +72,7 @@ async function verifyTx(res: Response, txid: string) {
   return parsedIx2.accounts;
 }
 
-export default async function processBet(
+export default async function processFlip(
   req: Request,
   res: Response,
   _next: NextFunction

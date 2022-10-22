@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- CreateTable
 CREATE TABLE "currency" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),

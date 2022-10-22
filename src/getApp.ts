@@ -2,7 +2,7 @@ import type { Express } from "express-serve-static-core";
 import cors from "cors";
 import express from "express";
 import getRecentPlays from "src/api/get/getRecentPlays";
-import processBet from "src/api/post/processBet";
+import processFlip from "src/api/post/processFlip";
 
 function useMiddleware(app: Express): void {
   app.use(express.static("public"));
@@ -31,7 +31,7 @@ export default function getApp(): Express {
 
   app.get("/getRecentPlays", getRecentPlays);
 
-  app.post("/processFlip", processBet);
+  app.post("/processFlip", processFlip);
 
   return app;
 }

@@ -16,8 +16,9 @@ export default async function retryWithDifferentRpcsFn<T>(
     if (shouldReturn) {
       return result;
     }
-  } catch {
-    // Swallow
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(e);
   }
 
   const retries = await Promise.all(
