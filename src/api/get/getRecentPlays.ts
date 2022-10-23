@@ -16,7 +16,7 @@ export default async function getRecentPlays(
       user: true,
     },
     orderBy: {
-      timeCreated: "asc",
+      timeCreated: "desc",
     },
     skip: Number(skip),
     take: Number(take),

@@ -144,5 +144,10 @@ export default async function processFlip(
     },
   });
 
-  res.json({ betAmount, didUserWinBet: flipsPrediction === results });
+  res.json({
+    betAmount,
+    didUserWinBet: flipsPrediction === results,
+    flipsPrediction,
+    results,
+  });
 }
