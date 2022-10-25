@@ -28,6 +28,8 @@ function getStreaksForUser(flips: Array<Flip>, winOrLose: WinOrLose) {
     }
   });
 
+  streaks.push(currentStreak);
+
   return streaks;
 }
 
