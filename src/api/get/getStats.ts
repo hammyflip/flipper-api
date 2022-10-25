@@ -87,7 +87,7 @@ export default async function getStats(
     where: {
       timeCreated: {
         gte: dayjs()
-          .subtract(dayjs.duration({ hours: 24 }))
+          .subtract(dayjs.duration({ weeks: 1 }))
           .toDate(),
       },
     },
@@ -97,10 +97,10 @@ export default async function getStats(
     flipPredictions: getFlipPredictions(flips),
     flipResults: getFlipResults(flips),
     losingStreaks: getHighestStreaks(flips, "lose")
-      .slice(0, 10)
+      .slice(0, 5)
       .filter(({ streak }) => streak > 0),
     winStreaks: getHighestStreaks(flips, "win")
-      .slice(0, 10)
+      .slice(0, 5)
       .filter(({ streak }) => streak > 0),
   });
 }

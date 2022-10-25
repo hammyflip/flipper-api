@@ -4,7 +4,7 @@
 
 First run `yarn` to install all packages.
 
-Then, run `yarn start` to start the server. After that, you should be able to go to http://localhost:4000/.
+Then, run `yarn start` to start the server. After that, you should be able to go to http://localhost:4001/.
 
 ## DB stuff
 
