@@ -46,7 +46,9 @@ async function run() {
       WRAPPED_SOL_MINT
     );
     if (auctionHouseAccount.account != null) {
-      console.log("Auction house already exists, exiting...");
+      console.log(
+        `Auction house already exists at address ${auctionHouseAccount.pubkey.toString()}, exiting...`
+      );
       console.log(JSON.stringify(auctionHouseAccount.account, null, 2));
       return;
     }
