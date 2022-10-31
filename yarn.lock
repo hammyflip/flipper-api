@@ -60,10 +60,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@hammyflip/flipper-sdk@^0.0.14":
-  version "0.0.14"
-  resolved "https://npm.pkg.github.com/download/@hammyflip/flipper-sdk/0.0.14/2ef9f95ce1251841cf9cf731b90691f6ede77907#2ef9f95ce1251841cf9cf731b90691f6ede77907"
-  integrity sha512-zRQaB3yjZLYcb2NpG1fAgX97vpQCvaZU+nqOHlSMGb9jdwnqjxS9zlw1iUw3slNoVjpedyITGiRldXdAADwI0g==
+"@hammyflip/flipper-sdk@^0.0.15":
+  version "0.0.15"
+  resolved "https://npm.pkg.github.com/download/@hammyflip/flipper-sdk/0.0.15/f00fa5cc135804cda7b30987e593f297a442af25#f00fa5cc135804cda7b30987e593f297a442af25"
+  integrity sha512-S0dsCRLpZBnPwvWqqhk7j9HPQcOOQl844YDQoe/5vuxQFmj7Y363HV6fdH/kSuRK/GhN8ICOncZuO/7saXZzEQ==
   dependencies:
     "@project-serum/anchor" "^0.25.0"
     "@solana/spl-token" "^0.3.6"
