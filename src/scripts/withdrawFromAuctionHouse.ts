@@ -3,7 +3,7 @@
 
 import FlipperSdk from "@hammyflip/flipper-sdk";
 import AnchorWallet from "@hammyflip/flipper-sdk/dist/types/AnchorWallet";
-import { Connection, PublicKey } from "@solana/web3.js";
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import invariant from "tiny-invariant";
 import yargs from "yargs";
 import * as anchor from "@project-serum/anchor";
@@ -14,8 +14,11 @@ const WRAPPED_SOL_MINT = new PublicKey(
 );
 
 async function run() {
-  const { network } = yargs(process.argv.slice(2))
+  const { amount, network } = yargs(process.argv.slice(2))
     .options({
+      amount: {
+        type: "number",
+      },
       network: {
         type: "string",
       },
@@ -40,34 +43,23 @@ async function run() {
     wallet,
   });
 
-  try {
-    const auctionHouseAccount = await sdk.fetchAuctionHouse(
-      authority,
-      WRAPPED_SOL_MINT
-    );
-    if (auctionHouseAccount.account != null) {
-      console.log("Auction house already exists, exiting...");
-      console.log(JSON.stringify(auctionHouseAccount.account, null, 2));
-      return;
-    }
-  } catch {
-    // Swallow
-  }
+  const auctionHouseAccount = await sdk.fetchAuctionHouse(
+    authority,
+    WRAPPED_SOL_MINT
+  );
+  console.log("Auction house info:");
+  console.log(JSON.stringify(auctionHouseAccount.account, null, 2));
 
-  const tx = await sdk.createAuctionHouseTx(
+  const tx = await sdk.withdrawFromTreasury(
     {
-      payer: authority,
-      // TODO: should support creating auction houses for different SPL tokens
+      creator: authority,
       treasuryMint: WRAPPED_SOL_MINT,
       treasuryWithdrawalDestination:
         scriptConfig.treasuryWithdrawalDestination ??
         scriptConfig.authorityKeypair.publicKey,
-      treasuryWithdrawalDestinationOwner:
-        scriptConfig.treasuryWithdrawalDestinationOwner ??
-        scriptConfig.authorityKeypair.publicKey,
     },
     {
-      feeBasisPoints: 300,
+      amount: amount! * LAMPORTS_PER_SOL,
     }
   );
 
@@ -76,13 +68,7 @@ async function run() {
   });
   await connection.confirmTransaction(txid, "confirmed");
 
-  console.log("Auction house created!");
-
-  const auctionHouseAccount = await sdk.fetchAuctionHouse(
-    authority,
-    WRAPPED_SOL_MINT
-  );
-  console.log(JSON.stringify(auctionHouseAccount.account, null, 2));
+  console.log(`Withdrew ${amount} SOL from treasury, txid: ${txid}`);
 }
 
 run();

@@ -10,6 +10,7 @@
   "scripts": {
     "build": "prisma migrate deploy && prisma generate && tsc",
     "createAuctionHouse": "ts-node -O '{\"module\": \"commonjs\"}' -r tsconfig-paths/register src/scripts/createAuctionHouse.ts",
+    "withdrawFromAuctionHouse": "ts-node -O '{\"module\": \"commonjs\"}' -r tsconfig-paths/register src/scripts/withdrawFromAuctionHouse.ts",
     "eslint": "eslint 'src/**/*.ts'",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:gen": "prisma generate",
