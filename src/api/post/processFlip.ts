@@ -58,7 +58,11 @@ async function verifyTx(res: Response, txid: string) {
       return null;
     }
 
-    return parsedIx.accounts;
+    return {
+      accounts: parsedIx.accounts,
+      amount: parsedIx.data.amount as number,
+      bets: parsedIx.data.bets as number,
+    };
   }
 
   const ix1 = instructions[0];
@@ -70,7 +74,11 @@ async function verifyTx(res: Response, txid: string) {
     return null;
   }
 
-  return parsedIx2.accounts;
+  return {
+    accounts: parsedIx2.accounts,
+    amount: parsedIx2.data.amount as number,
+    bets: parsedIx2.data.bets as number,
+  };
 }
 
 export default async function processFlip(
@@ -80,17 +88,13 @@ export default async function processFlip(
 ): Promise<void> {
   const { txid } = req.body;
 
-  const accounts = await verifyTx(res, txid);
-  if (accounts == null) {
+  const verifyResults = await verifyTx(res, txid);
+  if (verifyResults == null) {
     return;
   }
+  const { accounts, amount: betAmount, bets: flipsPrediction } = verifyResults;
 
   const sdk = loadFlipperSdk();
-
-  const bettorInfoAccountBefore = await sdk.fetchBettorInfo(
-    accounts.bettor,
-    accounts.treasuryMint
-  );
 
   const results = Math.round(Math.random());
   const flipTx = await sdk.flipTx(
@@ -115,8 +119,6 @@ export default async function processFlip(
   );
 
   const prisma = getPrisma();
-  const betAmount = bettorInfoAccountBefore.account.amount.toNumber();
-  const flipsPrediction = bettorInfoAccountBefore.account.bets;
   // TODO: support SPL tokens
   const solanaCurrency = await insertSolanaCurrency();
   await prisma.flip.create({
