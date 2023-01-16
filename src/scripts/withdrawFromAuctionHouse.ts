@@ -50,7 +50,7 @@ async function run() {
   console.log("Auction house info:");
   console.log(JSON.stringify(auctionHouseAccount.account, null, 2));
 
-  const tx = await sdk.withdrawFromTreasury(
+  const tx = await sdk.withdrawFromTreasuryTx(
     {
       creator: authority,
       treasuryMint: WRAPPED_SOL_MINT,
