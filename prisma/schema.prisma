@@ -1,0 +1,45 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "darwin", "debian-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model currency {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String   @unique
+  decimals    Int
+  symbol      String   @unique
+  shortSymbol String?
+  iconSrc     String?
+  mint        String   @unique
+  usdRate     Decimal? @db.Decimal
+  solRate     Decimal? @db.Decimal
+
+  flip flip[]
+}
+
+model flip {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  currencyId      String   @db.Uuid
+  userId          String
+  betAmount       BigInt
+  flipsPrediction Int
+  flipsResult     Int
+  timeCreated     DateTime @default(now()) @db.Timestamptz(6)
+  txid1           String
+  txid2           String
+
+  currency currency @relation(fields: [currencyId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  user     user     @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+}
+
+model user {
+  id       String  @id
+  username String?
+
+  flip flip[]
+}
